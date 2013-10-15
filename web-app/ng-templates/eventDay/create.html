@@ -1,0 +1,29 @@
+
+<div class="page-header">
+	<h1>Create EventDay</h1>
+</div>
+<alert level="{{message.level}}" text="{{message.text}}"/>
+<form name="form" data-ng-submit="save(item)" class="form-horizontal">
+
+	<div class="control-group" data-ng-class="{error: errors.date}">
+		<label class="control-label" for="date">Date</label>
+		<div class="controls">
+            
+
+			<span class="help-inline" data-ng-show="errors.date">{{errors.date}}</span>
+		</div>
+	</div>
+	
+	<div class="control-group" data-ng-class="{error: errors.sessions}">
+		<label class="control-label" for="sessions">Sessions</label>
+		<div class="controls">
+            
+
+			<span class="help-inline" data-ng-show="errors.sessions">{{errors.sessions}}</span>
+		</div>
+	</div>
+	
+	<div class="form-actions">
+		<button type="submit" class="btn btn-primary" data-ng-disabled="form.$invalid"><i class="icon-ok"></i> Create</button>
+	</div>
+</form>

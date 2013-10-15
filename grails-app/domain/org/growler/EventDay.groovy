@@ -3,11 +3,14 @@ package org.growler
 class EventDay {
 
     Date date
-    Set<EventSession> sessions
-    
+
+    static hasMany = [sessions: EventSession]    
+
     static mappings = {
     }
 
     static constraints = {
+        date()
+        sessions()
     }
 }

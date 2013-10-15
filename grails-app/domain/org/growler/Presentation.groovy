@@ -15,10 +15,9 @@ class Presentation {
     String materialsNeeded
     String targetAudiance
     int lengthMinutes
-    Set<URL> videos
-    
-    //Set<File> files
 
+    static hasMany = [videos: String, files: String]
+    
     static mappings = {
     }
 

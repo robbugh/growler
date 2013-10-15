@@ -1,0 +1,42 @@
+
+<div class="page-header">
+    <h1>Address List</h1>
+</div>
+<alert level="{{message.level}}" text="{{message.text}}"/>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+        
+            <th data-sortable="country">Country</th>
+            
+            <th data-sortable="line1">Line1</th>
+            
+            <th data-sortable="line2">Line2</th>
+            
+            <th data-sortable="postalCode">Postal Code</th>
+            
+            <th data-sortable="state">State</th>
+            
+            <th data-sortable="title">Title</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-ng-repeat="item in list" data-ng-click="show(item)">
+            
+            <td>{{item.country}}</td>
+            
+            <td>{{item.line1}}</td>
+            
+            <td>{{item.line2}}</td>
+            
+            <td>{{item.postalCode}}</td>
+            
+            <td>{{item.state}}</td>
+            
+            <td>{{item.title}}</td>
+            
+        </tr>
+    </tbody>
+</table>
+<div class="pagination pagination-centered" data-pagination data-total="total"></div>

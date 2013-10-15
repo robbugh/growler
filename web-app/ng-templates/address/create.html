@@ -1,0 +1,65 @@
+
+<div class="page-header">
+	<h1>Create Address</h1>
+</div>
+<alert level="{{message.level}}" text="{{message.text}}"/>
+<form name="form" data-ng-submit="save(item)" class="form-horizontal">
+
+	<div class="control-group" data-ng-class="{error: errors.country}">
+		<label class="control-label" for="country">Country</label>
+		<div class="controls">
+            <input type="text" id="country" name="country" data-ng-model="item.country">
+
+			<span class="help-inline" data-ng-show="errors.country">{{errors.country}}</span>
+		</div>
+	</div>
+	
+	<div class="control-group" data-ng-class="{error: errors.line1}">
+		<label class="control-label" for="line1">Line1</label>
+		<div class="controls">
+            <input type="text" id="line1" name="line1" data-ng-model="item.line1">
+
+			<span class="help-inline" data-ng-show="errors.line1">{{errors.line1}}</span>
+		</div>
+	</div>
+	
+	<div class="control-group" data-ng-class="{error: errors.line2}">
+		<label class="control-label" for="line2">Line2</label>
+		<div class="controls">
+            <input type="text" id="line2" name="line2" data-ng-model="item.line2">
+
+			<span class="help-inline" data-ng-show="errors.line2">{{errors.line2}}</span>
+		</div>
+	</div>
+	
+	<div class="control-group" data-ng-class="{error: errors.postalCode}">
+		<label class="control-label" for="postalCode">Postal Code</label>
+		<div class="controls">
+            <input type="text" id="postalCode" name="postalCode" data-ng-model="item.postalCode">
+
+			<span class="help-inline" data-ng-show="errors.postalCode">{{errors.postalCode}}</span>
+		</div>
+	</div>
+	
+	<div class="control-group" data-ng-class="{error: errors.state}">
+		<label class="control-label" for="state">State</label>
+		<div class="controls">
+            <input type="text" id="state" name="state" data-ng-model="item.state">
+
+			<span class="help-inline" data-ng-show="errors.state">{{errors.state}}</span>
+		</div>
+	</div>
+	
+	<div class="control-group" data-ng-class="{error: errors.title}">
+		<label class="control-label" for="title">Title</label>
+		<div class="controls">
+            <input type="text" id="title" name="title" data-ng-model="item.title">
+
+			<span class="help-inline" data-ng-show="errors.title">{{errors.title}}</span>
+		</div>
+	</div>
+	
+	<div class="form-actions">
+		<button type="submit" class="btn btn-primary" data-ng-disabled="form.$invalid"><i class="icon-ok"></i> Create</button>
+	</div>
+</form>

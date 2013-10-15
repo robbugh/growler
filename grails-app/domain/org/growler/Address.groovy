@@ -5,7 +5,7 @@ class Address {
     String title
     String line1
     String line2
-    String state // or provence
+    String state // or province
     String country
     String postalCode
 
@@ -13,5 +13,11 @@ class Address {
     }
 
     static constraints = {
+        title()
+        line1()
+        line2()
+        state()
+        country()
+        postalCode()   
     }
 }

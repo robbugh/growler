@@ -1,0 +1,54 @@
+
+<div class="page-header">
+	<h1>Show Speaker</h1>
+</div>
+<alert level="{{message.level}}" text="{{message.text}}"/>
+<dl class="dl-horizontal">
+	
+	<dt>Title</dt>
+	<dd data-ng-bind="item.title"></dd>
+	
+	<dt>Phone</dt>
+	<dd data-ng-bind="item.phone"></dd>
+	
+	<dt>Twitter Id</dt>
+	<dd data-ng-bind="item.twitterId"></dd>
+	
+	<dt>Linked In Url</dt>
+	<dd data-ng-bind="item.linkedInUrl"></dd>
+	
+	<dt>Web Url</dt>
+	<dd data-ng-bind="item.webUrl"></dd>
+	
+	<dt>Company</dt>
+	<dd data-ng-bind="item.company"></dd>
+	
+	<dt>Address</dt>
+	<dd data-ng-bind="item.address"></dd>
+	
+	<dt>Bios</dt>
+	<dd data-ng-bind="item.bios"></dd>
+	
+	<dt>Email</dt>
+	<dd data-ng-bind="item.email"></dd>
+	
+	<dt>First Name</dt>
+	<dd data-ng-bind="item.firstName"></dd>
+	
+	<dt>Last Name</dt>
+	<dd data-ng-bind="item.lastName"></dd>
+	
+	<dt>Middle Name</dt>
+	<dd data-ng-bind="item.middleName"></dd>
+	
+	<dt>Presentations</dt>
+	<dd data-ng-bind="item.presentations"></dd>
+	
+	<dt>Videos</dt>
+	<dd data-ng-bind="item.videos"></dd>
+	
+</dl>
+<div class="form-actions">
+	<a class="btn" data-ng-href="#/edit/{{item.id}}"><i class="icon-edit"></i> Edit</a>
+	<button type="button" class="btn btn-danger" data-ng-click="delete(item)"><i class="icon-trash"></i> Delete</button>
+</div>

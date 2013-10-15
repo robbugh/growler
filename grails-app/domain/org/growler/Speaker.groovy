@@ -7,17 +7,23 @@ class Speaker extends Member {
     String twitterId
     String linkedInUrl
     String webUrl
-    String Address
     String company
-    String bio
+    Address address
     //File photo -- Use Gravatar instead?
     
-    Set<Presentation> presentations
-    Set<URL> presentationsVideoUrls
+    static hasMany = [bios: Biography, presentations: Presentation, videos: String]
 
     static mappings = {
     }
 
     static constraints = {
+        title()
+        phone()
+        twitterId()
+        linkedInUrl()
+        webUrl()
+        company()
+        address()
+        bios()        
     }
 }

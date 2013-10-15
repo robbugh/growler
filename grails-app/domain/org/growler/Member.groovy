@@ -7,7 +7,8 @@ class Member {
     String middleName
     String lastName
 
-    static mappings = {
+    static mapping = {
+        tablePerHierarchy false
     }
 
     static constraints = {

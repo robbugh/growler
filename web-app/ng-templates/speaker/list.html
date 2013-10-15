@@ -1,0 +1,42 @@
+
+<div class="page-header">
+    <h1>Speaker List</h1>
+</div>
+<alert level="{{message.level}}" text="{{message.text}}"/>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+        
+            <th data-sortable="title">Title</th>
+            
+            <th data-sortable="phone">Phone</th>
+            
+            <th data-sortable="twitterId">Twitter Id</th>
+            
+            <th data-sortable="linkedInUrl">Linked In Url</th>
+            
+            <th data-sortable="webUrl">Web Url</th>
+            
+            <th data-sortable="company">Company</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-ng-repeat="item in list" data-ng-click="show(item)">
+            
+            <td>{{item.title}}</td>
+            
+            <td>{{item.phone}}</td>
+            
+            <td>{{item.twitterId}}</td>
+            
+            <td>{{item.linkedInUrl}}</td>
+            
+            <td>{{item.webUrl}}</td>
+            
+            <td>{{item.company}}</td>
+            
+        </tr>
+    </tbody>
+</table>
+<div class="pagination pagination-centered" data-pagination data-total="total"></div>
