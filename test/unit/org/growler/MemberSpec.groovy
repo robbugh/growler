@@ -1,6 +1,7 @@
 package org.growler
 
 import grails.test.mixin.TestFor
+import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
 
 /**
@@ -10,11 +11,30 @@ import spock.lang.Specification
 class MemberSpec extends Specification {
 
     def setup() {
+       // mock a Member object for testing unique constraint violation
+       mockForConstraintsTests(Member, [new Member(email: 'unique@bar.com', firstName:'foo', lastName: 'bar')])
     }
 
     def cleanup() {
     }
 
-    void "test something"() {
+    void "test valid Member"() {
+        when: 'a Member is valid'
+        def validateable = new Member(email: 'foo@bar.com', firstName:'foo', lastName: 'bar')
+
+        then: 'validate() returns true and there are no errors'
+        validateable.validate()
+        !validateable.hasErrors()
+        validateable.errors.errorCount == 0
+    }
+
+    void "test unique constraint violation on Member"() {
+        when: 'a Member is valid'
+        def validateable = new Member(email: 'unique@bar.com', firstName:'foo', lastName: 'bar')
+
+        then: 'validate() returns false and there is one error'
+        !validateable.validate()
+        validateable.hasErrors()
+        validateable.errors.errorCount == 1
     }
 }

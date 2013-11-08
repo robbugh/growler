@@ -12,5 +12,9 @@ class Member {
     }
 
     static constraints = {
+        email email: true, unique: true
+        firstName blank: false
+        middleName nullable: true
+        lastName blank: false
     }
 }
