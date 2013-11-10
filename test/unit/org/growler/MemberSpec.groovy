@@ -20,7 +20,7 @@ class MemberSpec extends Specification {
 
     void "test valid Member"() {
         when: 'a Member is valid'
-        def validateable = new Member(email: 'foo@bar.com', firstName:'foo', lastName: 'bar')
+        def validateable = new Member(email: 'foo@bar.com', firstName:'foo', middleName: 'bar', lastName: 'baz')
 
         then: 'validate() returns true and there are no errors'
         validateable.validate()
@@ -28,8 +28,8 @@ class MemberSpec extends Specification {
         validateable.errors.errorCount == 0
     }
 
-    void "test unique constraint violation on Member"() {
-        when: 'a Member is valid'
+    void "test unique constraint violation on Email"() {
+        when: 'a email is not unique'
         def validateable = new Member(email: 'unique@bar.com', firstName:'foo', lastName: 'bar')
 
         then: 'validate() returns false and there is one error'
@@ -37,4 +37,44 @@ class MemberSpec extends Specification {
         validateable.hasErrors()
         validateable.errors.errorCount == 1
     }
+	
+	void "test invalid email"() {
+		when: 'a email is invalid'
+		def validateable = new Member(email: 'foo', firstName:'foo', lastName: 'bar')
+
+		then: 'validate() returns false and there is one error'
+		!validateable.validate()
+		validateable.hasErrors()
+		validateable.errors.errorCount == 1
+	}
+	
+	void "test invalid firstName"() {
+		when: 'a firstName is invalid'
+		def validateable = new Member(email: 'foo@bar.com', firstName:'', lastName: 'bar')
+
+		then: 'validate() returns false and there is one error'
+		!validateable.validate()
+		validateable.hasErrors()
+		validateable.errors.errorCount == 1
+	}
+	
+	void "test invalid lastName"() {
+		when: 'a lastName is invalid'
+		def validateable = new Member(email: 'foo@bar.com', firstName:'foo', lastName: '')
+
+		then: 'validate() returns false and there is one error'
+		!validateable.validate()
+		validateable.hasErrors()
+		validateable.errors.errorCount == 1
+	}
+	
+	void "test null middleName"() {
+		when: 'a middleName is invalid'
+		def validateable = new Member(email: 'foo@bar.com', firstName:'foo', middleName: '', lastName: 'bar')
+
+        then: 'validate() returns true and there are no errors'
+        validateable.validate()
+        !validateable.hasErrors()
+        validateable.errors.errorCount == 0
+	}
 }

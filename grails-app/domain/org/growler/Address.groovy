@@ -2,7 +2,7 @@ package org.growler
 
 class Address {
 
-    String title
+    String description
     String line1
     String line2
     String state // or province
@@ -13,11 +13,11 @@ class Address {
     }
 
     static constraints = {
-        title()
-        line1()
-        line2()
-        state()
-        country()
-        postalCode()   
+        description nullable: true, maxSize: 256
+        line1 blank: false
+        line2 nullable: true
+        state blank: false
+        country blank: false
+        postalCode blank: false, maxSize: 10    
     }
 }
