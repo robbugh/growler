@@ -1,26 +1,62 @@
 
 <%@ page import="org.growler.Biography" %>
-<!doctype html>
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta name="layout" content="ng-app">
-        <g:set var="entityName" value="${message(code: 'biography.label', default: 'Biography')}" />
-        <title><g:message code="default.list.label" args="[entityName]" /></title>
-        <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}" type="text/css">
-        <link rel="stylesheet" href="${resource(dir: 'css', file: 'mobile.css')}" type="text/css">
-
-        <r:require module="angular-scaffolding"/>
-    </head>
-    <body data-ng-app="scaffolding" data-base-url="${createLink(uri: '/biography/')}">
-        <a href="#list-biography" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-        <div class="nav" role="navigation">
-            <ul>
-                <li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-                <li><a class="list" href="#list"><g:message code="default.list.label" args="[entityName]" /></a></li>
-                <li><a class="create" href="#create"><g:message code="default.new.label" args="[entityName]" /></a></li>
-            </ul>
-        </div>
-        <div class="content" role="main" data-ng-view>
-        </div>
-    </body>
+	<head>
+		<meta name="layout" content="main">
+		<g:set var="entityName" value="${message(code: 'biography.label', default: 'Biography')}" />
+		<title><g:message code="default.list.label" args="[entityName]" /></title>
+	</head>
+	<body>
+		<a href="#list-biography" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
+		<div class="nav" role="navigation">
+			<ul>
+				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
+				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+			</ul>
+		</div>
+		<div id="list-biography" class="content scaffold-list" role="main">
+			<h1><g:message code="default.list.label" args="[entityName]" /></h1>
+			<g:if test="${flash.message}">
+				<div class="message" role="status">${flash.message}</div>
+			</g:if>
+			<table>
+			<thead>
+					<tr>
+					
+						<g:sortableColumn property="title" title="${message(code: 'biography.title.label', default: 'Title')}" />
+					
+						<g:sortableColumn property="description" title="${message(code: 'biography.description.label', default: 'Description')}" />
+					
+						<g:sortableColumn property="lastUpdate" title="${message(code: 'biography.lastUpdate.label', default: 'Last Update')}" />
+					
+						<g:sortableColumn property="lastUpdatedBy" title="${message(code: 'biography.lastUpdatedBy.label', default: 'Last Updated By')}" />
+					
+						<g:sortableColumn property="dateCreated" title="${message(code: 'biography.dateCreated.label', default: 'Date Created')}" />
+					
+					</tr>
+				</thead>
+				<tbody>
+				<g:each in="${biographyInstanceList}" status="i" var="biographyInstance">
+					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
+					
+						<td><g:link action="show" id="${biographyInstance.id}">${fieldValue(bean: biographyInstance, field: "title")}</g:link></td>
+					
+						<td>${fieldValue(bean: biographyInstance, field: "description")}</td>
+					
+						<td><g:formatDate date="${biographyInstance.lastUpdate}" /></td>
+					
+						<td>${fieldValue(bean: biographyInstance, field: "lastUpdatedBy")}</td>
+					
+						<td><g:formatDate date="${biographyInstance.dateCreated}" /></td>
+					
+					</tr>
+				</g:each>
+				</tbody>
+			</table>
+			<div class="pagination">
+				<g:paginate total="${biographyInstanceCount ?: 0}" />
+			</div>
+		</div>
+	</body>
 </html>

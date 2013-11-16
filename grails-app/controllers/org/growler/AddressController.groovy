@@ -1,106 +1,104 @@
 package org.growler
 
-import org.springframework.dao.DataIntegrityViolationException
-import grails.converters.JSON
-import static javax.servlet.http.HttpServletResponse.*
 
+
+import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
+
+@Transactional(readOnly = true)
 class AddressController {
 
-    static final int SC_UNPROCESSABLE_ENTITY = 422
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-
-    def index() { }
-
-    def list() {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
-		response.setIntHeader('X-Pagination-Total', Address.count())
-		render Address.list(params) as JSON
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        respond Address.list(params), model:[addressInstanceCount: Address.count()]
     }
 
-    def save() {
-        def addressInstance = new Address(request.JSON)
-        def responseJson = [:]
-        if (addressInstance.save(flush: true)) {
-            response.status = SC_CREATED
-            responseJson.id = addressInstance.id
-            responseJson.message = message(code: 'default.created.message', args: [message(code: 'address.label', default: 'Address'), addressInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = addressInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-        render responseJson as JSON
+    def show(Address addressInstance) {
+        respond addressInstance
     }
 
-    def get() {
-        def addressInstance = Address.get(params.id)
-        if (addressInstance) {
-			render addressInstance as JSON
-        } else {
-			notFound params.id
-		}
+    def create() {
+        respond new Address(params)
     }
 
-    def update() {
-        def addressInstance = Address.get(params.id)
-        if (!addressInstance) {
-            notFound params.id
+    @Transactional
+    def save(Address addressInstance) {
+        if (addressInstance == null) {
+            notFound()
             return
         }
 
-        def responseJson = [:]
-
-        if (request.JSON.version != null) {
-            if (addressInstance.version > request.JSON.version) {
-				response.status = SC_CONFLICT
-				responseJson.message = message(code: 'default.optimistic.locking.failure',
-						args: [message(code: 'address.label', default: 'Address')],
-						default: 'Another user has updated this Address while you were editing')
-				cache false
-				render responseJson as JSON
-				return
-            }
-        }
-
-        addressInstance.properties = request.JSON
-
-        if (addressInstance.save(flush: true)) {
-            response.status = SC_OK
-            responseJson.id = addressInstance.id
-            responseJson.message = message(code: 'default.updated.message', args: [message(code: 'address.label', default: 'Address'), addressInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = addressInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-
-        render responseJson as JSON
-    }
-
-    def delete() {
-        def addressInstance = Address.get(params.id)
-        if (!addressInstance) {
-            notFound params.id
+        if (addressInstance.hasErrors()) {
+            respond addressInstance.errors, view:'create'
             return
         }
 
-        def responseJson = [:]
-        try {
-            addressInstance.delete(flush: true)
-            responseJson.message = message(code: 'default.deleted.message', args: [message(code: 'address.label', default: 'Address'), params.id])
-        } catch (DataIntegrityViolationException e) {
-            response.status = SC_CONFLICT
-            responseJson.message = message(code: 'default.not.deleted.message', args: [message(code: 'address.label', default: 'Address'), params.id])
+        addressInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'addressInstance.label', default: 'Address'), addressInstance.id])
+                redirect addressInstance
+            }
+            '*' { respond addressInstance, [status: CREATED] }
         }
-        render responseJson as JSON
     }
 
-    private void notFound(id) {
-        response.status = SC_NOT_FOUND
-        def responseJson = [message: message(code: 'default.not.found.message', args: [message(code: 'address.label', default: 'Address'), params.id])]
-        render responseJson as JSON
+    def edit(Address addressInstance) {
+        respond addressInstance
+    }
+
+    @Transactional
+    def update(Address addressInstance) {
+        if (addressInstance == null) {
+            notFound()
+            return
+        }
+
+        if (addressInstance.hasErrors()) {
+            respond addressInstance.errors, view:'edit'
+            return
+        }
+
+        addressInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.updated.message', args: [message(code: 'Address.label', default: 'Address'), addressInstance.id])
+                redirect addressInstance
+            }
+            '*'{ respond addressInstance, [status: OK] }
+        }
+    }
+
+    @Transactional
+    def delete(Address addressInstance) {
+
+        if (addressInstance == null) {
+            notFound()
+            return
+        }
+
+        addressInstance.delete flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Address.label', default: 'Address'), addressInstance.id])
+                redirect action:"index", method:"GET"
+            }
+            '*'{ render status: NO_CONTENT }
+        }
+    }
+
+    protected void notFound() {
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'addressInstance.label', default: 'Address'), params.id])
+                redirect action: "index", method: "GET"
+            }
+            '*'{ render status: NOT_FOUND }
+        }
     }
 }
