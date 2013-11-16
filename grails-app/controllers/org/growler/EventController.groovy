@@ -1,106 +1,104 @@
 package org.growler
 
-import org.springframework.dao.DataIntegrityViolationException
-import grails.converters.JSON
-import static javax.servlet.http.HttpServletResponse.*
 
+
+import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
+
+@Transactional(readOnly = true)
 class EventController {
 
-    static final int SC_UNPROCESSABLE_ENTITY = 422
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-
-    def index() { }
-
-    def list() {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
-		response.setIntHeader('X-Pagination-Total', Event.count())
-		render Event.list(params) as JSON
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        respond Event.list(params), model:[eventInstanceCount: Event.count()]
     }
 
-    def save() {
-        def eventInstance = new Event(request.JSON)
-        def responseJson = [:]
-        if (eventInstance.save(flush: true)) {
-            response.status = SC_CREATED
-            responseJson.id = eventInstance.id
-            responseJson.message = message(code: 'default.created.message', args: [message(code: 'event.label', default: 'Event'), eventInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = eventInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-        render responseJson as JSON
+    def show(Event eventInstance) {
+        respond eventInstance
     }
 
-    def get() {
-        def eventInstance = Event.get(params.id)
-        if (eventInstance) {
-			render eventInstance as JSON
-        } else {
-			notFound params.id
-		}
+    def create() {
+        respond new Event(params)
     }
 
-    def update() {
-        def eventInstance = Event.get(params.id)
-        if (!eventInstance) {
-            notFound params.id
+    @Transactional
+    def save(Event eventInstance) {
+        if (eventInstance == null) {
+            notFound()
             return
         }
 
-        def responseJson = [:]
-
-        if (request.JSON.version != null) {
-            if (eventInstance.version > request.JSON.version) {
-				response.status = SC_CONFLICT
-				responseJson.message = message(code: 'default.optimistic.locking.failure',
-						args: [message(code: 'event.label', default: 'Event')],
-						default: 'Another user has updated this Event while you were editing')
-				cache false
-				render responseJson as JSON
-				return
-            }
-        }
-
-        eventInstance.properties = request.JSON
-
-        if (eventInstance.save(flush: true)) {
-            response.status = SC_OK
-            responseJson.id = eventInstance.id
-            responseJson.message = message(code: 'default.updated.message', args: [message(code: 'event.label', default: 'Event'), eventInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = eventInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-
-        render responseJson as JSON
-    }
-
-    def delete() {
-        def eventInstance = Event.get(params.id)
-        if (!eventInstance) {
-            notFound params.id
+        if (eventInstance.hasErrors()) {
+            respond eventInstance.errors, view:'create'
             return
         }
 
-        def responseJson = [:]
-        try {
-            eventInstance.delete(flush: true)
-            responseJson.message = message(code: 'default.deleted.message', args: [message(code: 'event.label', default: 'Event'), params.id])
-        } catch (DataIntegrityViolationException e) {
-            response.status = SC_CONFLICT
-            responseJson.message = message(code: 'default.not.deleted.message', args: [message(code: 'event.label', default: 'Event'), params.id])
+        eventInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'eventInstance.label', default: 'Event'), eventInstance.id])
+                redirect eventInstance
+            }
+            '*' { respond eventInstance, [status: CREATED] }
         }
-        render responseJson as JSON
     }
 
-    private void notFound(id) {
-        response.status = SC_NOT_FOUND
-        def responseJson = [message: message(code: 'default.not.found.message', args: [message(code: 'event.label', default: 'Event'), params.id])]
-        render responseJson as JSON
+    def edit(Event eventInstance) {
+        respond eventInstance
+    }
+
+    @Transactional
+    def update(Event eventInstance) {
+        if (eventInstance == null) {
+            notFound()
+            return
+        }
+
+        if (eventInstance.hasErrors()) {
+            respond eventInstance.errors, view:'edit'
+            return
+        }
+
+        eventInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.updated.message', args: [message(code: 'Event.label', default: 'Event'), eventInstance.id])
+                redirect eventInstance
+            }
+            '*'{ respond eventInstance, [status: OK] }
+        }
+    }
+
+    @Transactional
+    def delete(Event eventInstance) {
+
+        if (eventInstance == null) {
+            notFound()
+            return
+        }
+
+        eventInstance.delete flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Event.label', default: 'Event'), eventInstance.id])
+                redirect action:"index", method:"GET"
+            }
+            '*'{ render status: NO_CONTENT }
+        }
+    }
+
+    protected void notFound() {
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'eventInstance.label', default: 'Event'), params.id])
+                redirect action: "index", method: "GET"
+            }
+            '*'{ render status: NOT_FOUND }
+        }
     }
 }

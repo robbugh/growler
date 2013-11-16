@@ -1,106 +1,104 @@
 package org.growler
 
-import org.springframework.dao.DataIntegrityViolationException
-import grails.converters.JSON
-import static javax.servlet.http.HttpServletResponse.*
 
+
+import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
+
+@Transactional(readOnly = true)
 class BiographyController {
 
-    static final int SC_UNPROCESSABLE_ENTITY = 422
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-
-    def index() { }
-
-    def list() {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
-		response.setIntHeader('X-Pagination-Total', Biography.count())
-		render Biography.list(params) as JSON
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        respond Biography.list(params), model:[biographyInstanceCount: Biography.count()]
     }
 
-    def save() {
-        def biographyInstance = new Biography(request.JSON)
-        def responseJson = [:]
-        if (biographyInstance.save(flush: true)) {
-            response.status = SC_CREATED
-            responseJson.id = biographyInstance.id
-            responseJson.message = message(code: 'default.created.message', args: [message(code: 'biography.label', default: 'Biography'), biographyInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = biographyInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-        render responseJson as JSON
+    def show(Biography biographyInstance) {
+        respond biographyInstance
     }
 
-    def get() {
-        def biographyInstance = Biography.get(params.id)
-        if (biographyInstance) {
-			render biographyInstance as JSON
-        } else {
-			notFound params.id
-		}
+    def create() {
+        respond new Biography(params)
     }
 
-    def update() {
-        def biographyInstance = Biography.get(params.id)
-        if (!biographyInstance) {
-            notFound params.id
+    @Transactional
+    def save(Biography biographyInstance) {
+        if (biographyInstance == null) {
+            notFound()
             return
         }
 
-        def responseJson = [:]
-
-        if (request.JSON.version != null) {
-            if (biographyInstance.version > request.JSON.version) {
-				response.status = SC_CONFLICT
-				responseJson.message = message(code: 'default.optimistic.locking.failure',
-						args: [message(code: 'biography.label', default: 'Biography')],
-						default: 'Another user has updated this Biography while you were editing')
-				cache false
-				render responseJson as JSON
-				return
-            }
-        }
-
-        biographyInstance.properties = request.JSON
-
-        if (biographyInstance.save(flush: true)) {
-            response.status = SC_OK
-            responseJson.id = biographyInstance.id
-            responseJson.message = message(code: 'default.updated.message', args: [message(code: 'biography.label', default: 'Biography'), biographyInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = biographyInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-
-        render responseJson as JSON
-    }
-
-    def delete() {
-        def biographyInstance = Biography.get(params.id)
-        if (!biographyInstance) {
-            notFound params.id
+        if (biographyInstance.hasErrors()) {
+            respond biographyInstance.errors, view:'create'
             return
         }
 
-        def responseJson = [:]
-        try {
-            biographyInstance.delete(flush: true)
-            responseJson.message = message(code: 'default.deleted.message', args: [message(code: 'biography.label', default: 'Biography'), params.id])
-        } catch (DataIntegrityViolationException e) {
-            response.status = SC_CONFLICT
-            responseJson.message = message(code: 'default.not.deleted.message', args: [message(code: 'biography.label', default: 'Biography'), params.id])
+        biographyInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'biographyInstance.label', default: 'Biography'), biographyInstance.id])
+                redirect biographyInstance
+            }
+            '*' { respond biographyInstance, [status: CREATED] }
         }
-        render responseJson as JSON
     }
 
-    private void notFound(id) {
-        response.status = SC_NOT_FOUND
-        def responseJson = [message: message(code: 'default.not.found.message', args: [message(code: 'biography.label', default: 'Biography'), params.id])]
-        render responseJson as JSON
+    def edit(Biography biographyInstance) {
+        respond biographyInstance
+    }
+
+    @Transactional
+    def update(Biography biographyInstance) {
+        if (biographyInstance == null) {
+            notFound()
+            return
+        }
+
+        if (biographyInstance.hasErrors()) {
+            respond biographyInstance.errors, view:'edit'
+            return
+        }
+
+        biographyInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.updated.message', args: [message(code: 'Biography.label', default: 'Biography'), biographyInstance.id])
+                redirect biographyInstance
+            }
+            '*'{ respond biographyInstance, [status: OK] }
+        }
+    }
+
+    @Transactional
+    def delete(Biography biographyInstance) {
+
+        if (biographyInstance == null) {
+            notFound()
+            return
+        }
+
+        biographyInstance.delete flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Biography.label', default: 'Biography'), biographyInstance.id])
+                redirect action:"index", method:"GET"
+            }
+            '*'{ render status: NO_CONTENT }
+        }
+    }
+
+    protected void notFound() {
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'biographyInstance.label', default: 'Biography'), params.id])
+                redirect action: "index", method: "GET"
+            }
+            '*'{ render status: NOT_FOUND }
+        }
     }
 }

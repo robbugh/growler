@@ -1,106 +1,104 @@
 package org.growler
 
-import org.springframework.dao.DataIntegrityViolationException
-import grails.converters.JSON
-import static javax.servlet.http.HttpServletResponse.*
 
+
+import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
+
+@Transactional(readOnly = true)
 class EventSessionController {
 
-    static final int SC_UNPROCESSABLE_ENTITY = 422
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-
-    def index() { }
-
-    def list() {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
-		response.setIntHeader('X-Pagination-Total', EventSession.count())
-		render EventSession.list(params) as JSON
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        respond EventSession.list(params), model:[eventSessionInstanceCount: EventSession.count()]
     }
 
-    def save() {
-        def eventSessionInstance = new EventSession(request.JSON)
-        def responseJson = [:]
-        if (eventSessionInstance.save(flush: true)) {
-            response.status = SC_CREATED
-            responseJson.id = eventSessionInstance.id
-            responseJson.message = message(code: 'default.created.message', args: [message(code: 'eventSession.label', default: 'EventSession'), eventSessionInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = eventSessionInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-        render responseJson as JSON
+    def show(EventSession eventSessionInstance) {
+        respond eventSessionInstance
     }
 
-    def get() {
-        def eventSessionInstance = EventSession.get(params.id)
-        if (eventSessionInstance) {
-			render eventSessionInstance as JSON
-        } else {
-			notFound params.id
-		}
+    def create() {
+        respond new EventSession(params)
     }
 
-    def update() {
-        def eventSessionInstance = EventSession.get(params.id)
-        if (!eventSessionInstance) {
-            notFound params.id
+    @Transactional
+    def save(EventSession eventSessionInstance) {
+        if (eventSessionInstance == null) {
+            notFound()
             return
         }
 
-        def responseJson = [:]
-
-        if (request.JSON.version != null) {
-            if (eventSessionInstance.version > request.JSON.version) {
-				response.status = SC_CONFLICT
-				responseJson.message = message(code: 'default.optimistic.locking.failure',
-						args: [message(code: 'eventSession.label', default: 'EventSession')],
-						default: 'Another user has updated this EventSession while you were editing')
-				cache false
-				render responseJson as JSON
-				return
-            }
-        }
-
-        eventSessionInstance.properties = request.JSON
-
-        if (eventSessionInstance.save(flush: true)) {
-            response.status = SC_OK
-            responseJson.id = eventSessionInstance.id
-            responseJson.message = message(code: 'default.updated.message', args: [message(code: 'eventSession.label', default: 'EventSession'), eventSessionInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = eventSessionInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-
-        render responseJson as JSON
-    }
-
-    def delete() {
-        def eventSessionInstance = EventSession.get(params.id)
-        if (!eventSessionInstance) {
-            notFound params.id
+        if (eventSessionInstance.hasErrors()) {
+            respond eventSessionInstance.errors, view:'create'
             return
         }
 
-        def responseJson = [:]
-        try {
-            eventSessionInstance.delete(flush: true)
-            responseJson.message = message(code: 'default.deleted.message', args: [message(code: 'eventSession.label', default: 'EventSession'), params.id])
-        } catch (DataIntegrityViolationException e) {
-            response.status = SC_CONFLICT
-            responseJson.message = message(code: 'default.not.deleted.message', args: [message(code: 'eventSession.label', default: 'EventSession'), params.id])
+        eventSessionInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'eventSessionInstance.label', default: 'EventSession'), eventSessionInstance.id])
+                redirect eventSessionInstance
+            }
+            '*' { respond eventSessionInstance, [status: CREATED] }
         }
-        render responseJson as JSON
     }
 
-    private void notFound(id) {
-        response.status = SC_NOT_FOUND
-        def responseJson = [message: message(code: 'default.not.found.message', args: [message(code: 'eventSession.label', default: 'EventSession'), params.id])]
-        render responseJson as JSON
+    def edit(EventSession eventSessionInstance) {
+        respond eventSessionInstance
+    }
+
+    @Transactional
+    def update(EventSession eventSessionInstance) {
+        if (eventSessionInstance == null) {
+            notFound()
+            return
+        }
+
+        if (eventSessionInstance.hasErrors()) {
+            respond eventSessionInstance.errors, view:'edit'
+            return
+        }
+
+        eventSessionInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.updated.message', args: [message(code: 'EventSession.label', default: 'EventSession'), eventSessionInstance.id])
+                redirect eventSessionInstance
+            }
+            '*'{ respond eventSessionInstance, [status: OK] }
+        }
+    }
+
+    @Transactional
+    def delete(EventSession eventSessionInstance) {
+
+        if (eventSessionInstance == null) {
+            notFound()
+            return
+        }
+
+        eventSessionInstance.delete flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.deleted.message', args: [message(code: 'EventSession.label', default: 'EventSession'), eventSessionInstance.id])
+                redirect action:"index", method:"GET"
+            }
+            '*'{ render status: NO_CONTENT }
+        }
+    }
+
+    protected void notFound() {
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'eventSessionInstance.label', default: 'EventSession'), params.id])
+                redirect action: "index", method: "GET"
+            }
+            '*'{ render status: NOT_FOUND }
+        }
     }
 }

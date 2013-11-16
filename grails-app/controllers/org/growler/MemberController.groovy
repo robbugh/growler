@@ -1,106 +1,104 @@
 package org.growler
 
-import org.springframework.dao.DataIntegrityViolationException
-import grails.converters.JSON
-import static javax.servlet.http.HttpServletResponse.*
 
+
+import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
+
+@Transactional(readOnly = true)
 class MemberController {
 
-    static final int SC_UNPROCESSABLE_ENTITY = 422
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-
-    def index() { }
-
-    def list() {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
-		response.setIntHeader('X-Pagination-Total', Member.count())
-		render Member.list(params) as JSON
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        respond Member.list(params), model:[memberInstanceCount: Member.count()]
     }
 
-    def save() {
-        def memberInstance = new Member(request.JSON)
-        def responseJson = [:]
-        if (memberInstance.save(flush: true)) {
-            response.status = SC_CREATED
-            responseJson.id = memberInstance.id
-            responseJson.message = message(code: 'default.created.message', args: [message(code: 'member.label', default: 'Member'), memberInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = memberInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-        render responseJson as JSON
+    def show(Member memberInstance) {
+        respond memberInstance
     }
 
-    def get() {
-        def memberInstance = Member.get(params.id)
-        if (memberInstance) {
-			render memberInstance as JSON
-        } else {
-			notFound params.id
-		}
+    def create() {
+        respond new Member(params)
     }
 
-    def update() {
-        def memberInstance = Member.get(params.id)
-        if (!memberInstance) {
-            notFound params.id
+    @Transactional
+    def save(Member memberInstance) {
+        if (memberInstance == null) {
+            notFound()
             return
         }
 
-        def responseJson = [:]
-
-        if (request.JSON.version != null) {
-            if (memberInstance.version > request.JSON.version) {
-				response.status = SC_CONFLICT
-				responseJson.message = message(code: 'default.optimistic.locking.failure',
-						args: [message(code: 'member.label', default: 'Member')],
-						default: 'Another user has updated this Member while you were editing')
-				cache false
-				render responseJson as JSON
-				return
-            }
-        }
-
-        memberInstance.properties = request.JSON
-
-        if (memberInstance.save(flush: true)) {
-            response.status = SC_OK
-            responseJson.id = memberInstance.id
-            responseJson.message = message(code: 'default.updated.message', args: [message(code: 'member.label', default: 'Member'), memberInstance.id])
-        } else {
-            response.status = SC_UNPROCESSABLE_ENTITY
-            responseJson.errors = memberInstance.errors.fieldErrors.collectEntries {
-                [(it.field): message(error: it)]
-            }
-        }
-
-        render responseJson as JSON
-    }
-
-    def delete() {
-        def memberInstance = Member.get(params.id)
-        if (!memberInstance) {
-            notFound params.id
+        if (memberInstance.hasErrors()) {
+            respond memberInstance.errors, view:'create'
             return
         }
 
-        def responseJson = [:]
-        try {
-            memberInstance.delete(flush: true)
-            responseJson.message = message(code: 'default.deleted.message', args: [message(code: 'member.label', default: 'Member'), params.id])
-        } catch (DataIntegrityViolationException e) {
-            response.status = SC_CONFLICT
-            responseJson.message = message(code: 'default.not.deleted.message', args: [message(code: 'member.label', default: 'Member'), params.id])
+        memberInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'memberInstance.label', default: 'Member'), memberInstance.id])
+                redirect memberInstance
+            }
+            '*' { respond memberInstance, [status: CREATED] }
         }
-        render responseJson as JSON
     }
 
-    private void notFound(id) {
-        response.status = SC_NOT_FOUND
-        def responseJson = [message: message(code: 'default.not.found.message', args: [message(code: 'member.label', default: 'Member'), params.id])]
-        render responseJson as JSON
+    def edit(Member memberInstance) {
+        respond memberInstance
+    }
+
+    @Transactional
+    def update(Member memberInstance) {
+        if (memberInstance == null) {
+            notFound()
+            return
+        }
+
+        if (memberInstance.hasErrors()) {
+            respond memberInstance.errors, view:'edit'
+            return
+        }
+
+        memberInstance.save flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.updated.message', args: [message(code: 'Member.label', default: 'Member'), memberInstance.id])
+                redirect memberInstance
+            }
+            '*'{ respond memberInstance, [status: OK] }
+        }
+    }
+
+    @Transactional
+    def delete(Member memberInstance) {
+
+        if (memberInstance == null) {
+            notFound()
+            return
+        }
+
+        memberInstance.delete flush:true
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Member.label', default: 'Member'), memberInstance.id])
+                redirect action:"index", method:"GET"
+            }
+            '*'{ render status: NO_CONTENT }
+        }
+    }
+
+    protected void notFound() {
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'memberInstance.label', default: 'Member'), params.id])
+                redirect action: "index", method: "GET"
+            }
+            '*'{ render status: NOT_FOUND }
+        }
     }
 }
