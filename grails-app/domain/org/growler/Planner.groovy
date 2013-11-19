@@ -14,6 +14,7 @@ class Planner extends Member {
 
     static constraints = {
 		phone blank:false, maxSize: 32
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

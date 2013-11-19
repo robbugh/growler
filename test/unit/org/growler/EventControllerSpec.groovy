@@ -1,18 +1,17 @@
 package org.growler
 
-
-
 import grails.test.mixin.*
 import spock.lang.*
 
 @TestFor(EventController)
-@Mock(Event)
+@Mock([Event, Address])
 class EventControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
+        params["name"] = 'name'
+        params["location"] = new Address()
+        params["status"] = 1
     }
 
     void "Test the index action returns the correct model"() {

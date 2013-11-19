@@ -22,10 +22,11 @@ class Event {
 		name blank:false, maxSize:256
 		location()
 		status()
-		url url:true
+		url url:true, nullable:true
 		eventDays nullable:true
 		hashTags nullable:true
-		twitterId blank:true, maxSize:64
+		twitterId nullable:true, maxSize:64
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

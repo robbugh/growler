@@ -11,8 +11,10 @@ class PlannerControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
+        params["phone"] = '123-123-1234'
+        params["firstName"] = 'firstName'
+        params["lastName"] = 'lastName'
+        params["email"] = 'email@email.com'
     }
 
     void "Test the index action returns the correct model"() {

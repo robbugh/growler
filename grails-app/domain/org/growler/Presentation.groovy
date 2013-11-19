@@ -25,6 +25,7 @@ class Presentation {
 		type inlist: ["WORKSHOP", "PANEL_DISCUSSION", "LECTURE"]
 		targetAudiance blank: false, maxSize: 32
 		lengthMinutes range: 0..240
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

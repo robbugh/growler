@@ -11,8 +11,12 @@ class PresentationControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
+        params["title"] = 'title'
+        params["abstractText"] = 'abstractText'
+        params["summary"] = 'summary'
+        params["type"] = 'WORKSHOP'
+        params["targetAudiance"] = 'targetAudiance'
+        params["lengthMinutes"] = 60
     }
 
     void "Test the index action returns the correct model"() {

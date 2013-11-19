@@ -11,8 +11,9 @@ class SpeakerControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
+        params["firstName"] = 'firstName'
+        params["lastName"] = 'lastName'
+        params["email"] = 'email@email.com'
     }
 
     void "Test the index action returns the correct model"() {

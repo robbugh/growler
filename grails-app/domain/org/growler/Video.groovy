@@ -22,6 +22,7 @@ class Video {
 		lengthMinutes()
 		videoFile nullable:true
 		url nullable:true
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }
