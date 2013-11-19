@@ -21,10 +21,11 @@ class EventSession {
     static constraints = {
 		title blank:false, maxSize:256
 		date()
-		presenters nullable:false
+		presenters()
 		presentation()
 		location blank:false, maxSize:128
 		language blank:false, maxSize:64
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

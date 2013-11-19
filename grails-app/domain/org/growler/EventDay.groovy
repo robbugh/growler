@@ -17,6 +17,7 @@ class EventDay {
     static constraints = {
         date()
         sessions()
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

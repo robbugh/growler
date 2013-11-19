@@ -24,6 +24,7 @@ class Address {
         state blank: false, maxSize: 64
         country blank: false, maxSize: 128
         postalCode blank: false, maxSize: 16
+        dateCreated nullable: true, display: false
         lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

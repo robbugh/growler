@@ -11,8 +11,8 @@ class ItemControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
+        params["name"] = 'name'
+        params["description"] = 'description'
     }
 
     void "Test the index action returns the correct model"() {

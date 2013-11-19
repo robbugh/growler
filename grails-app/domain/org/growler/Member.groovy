@@ -21,6 +21,7 @@ class Member {
         middleName nullable: true
         lastName blank: false
         email email: true, blank:false, unique: true
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

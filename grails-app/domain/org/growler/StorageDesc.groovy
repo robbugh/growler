@@ -17,6 +17,7 @@ class StorageDesc {
     static constraints = {
 		name blank:false, maxSize:256
 		path blank: false, maxSize: 1024
+        dateCreated nullable: true, display: false
 		lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }

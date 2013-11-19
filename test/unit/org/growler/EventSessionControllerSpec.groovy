@@ -6,13 +6,16 @@ import grails.test.mixin.*
 import spock.lang.*
 
 @TestFor(EventSessionController)
-@Mock(EventSession)
+@Mock([EventSession, Presentation])
 class EventSessionControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
+        params["title"] = 'Title'
+        params["date"] = new Date()
+        params["presentation"] = new Presentation()
+        params["location"] = 'RM 22'
+        params["language"] = 'English'
     }
 
     void "Test the index action returns the correct model"() {

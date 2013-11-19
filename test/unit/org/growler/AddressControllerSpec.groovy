@@ -1,7 +1,5 @@
 package org.growler
 
-
-
 import grails.test.mixin.*
 import spock.lang.*
 
@@ -11,8 +9,10 @@ class AddressControllerSpec extends Specification {
 
     def populateValidParams(params) {
         assert params != null
-        // TODO: Populate valid properties like...
-        //params["name"] = 'someValidName'
+        params["line1"] = '123 st'
+        params["state"] = 'TX'
+        params["country"] = 'USA'
+        params["postalCode"] = '78729'
     }
 
     void "Test the index action returns the correct model"() {
