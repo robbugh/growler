@@ -28,6 +28,17 @@ class MemberSpec extends Specification {
         validateable.errors.errorCount == 0
     }
 
+    void "test invalid email violation on Member"() {
+        when: 'a Member is invalid'
+        def validateable = new Member(email: 'bad', firstName:'foo', lastName: 'bar')
+
+        then: 'validate() returns false and there is one error'
+        !validateable.validate()
+        validateable.hasErrors()
+        validateable.errors.errorCount == 1
+		validateable.errors.fieldError.field == "email"
+    }
+
     void "test unique constraint violation on Member"() {
         when: 'a Member is valid'
         def validateable = new Member(email: 'unique@bar.com', firstName:'foo', lastName: 'bar')
