@@ -8,13 +8,11 @@ class Member {
     String middleName
     String lastName
     String email
-	Date dateCreated
-	Date lastUpdate
+    Date dateCreated
+    Date lastUpdate
     String lastUpdatedBy
 
-    static mapping = {
-        tablePerHierarchy false
-    }
+    static mapping = { tablePerHierarchy false }
 
     static constraints = {
         firstName blank: false
@@ -22,7 +20,7 @@ class Member {
         lastName blank: false
         email email: true, blank:false, unique: true
         dateCreated nullable: true, display: false
-		lastUpdate nullable: true, display: false
+        lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }
 

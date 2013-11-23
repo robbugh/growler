@@ -5,11 +5,11 @@ import java.util.Date;
 class EventDay {
 
     Date date
-	Date dateCreated
-	Date lastUpdate
+    Date dateCreated
+    Date lastUpdate
     String lastUpdatedBy
-    
-    static hasMany = [sessions: EventSession]    
+
+    static hasMany = [sessions: EventSession]
 
     static mappings = {
     }
@@ -18,7 +18,7 @@ class EventDay {
         date()
         sessions()
         dateCreated nullable: true, display: false
-		lastUpdate nullable: true, display: false
+        lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }
 

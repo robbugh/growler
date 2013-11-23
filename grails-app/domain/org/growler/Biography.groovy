@@ -6,10 +6,10 @@ class Biography {
 
     String title
     String description
-	Date dateCreated
-	Date lastUpdate
+    Date dateCreated
+    Date lastUpdate
     String lastUpdatedBy
-    
+
     static mappings = {
     }
 
@@ -17,7 +17,7 @@ class Biography {
         title blank:false, maxSize:256
         description blank:false, maxSize: 1024
         dateCreated nullable: true, display: false
-		lastUpdate nullable: true, display: false
+        lastUpdate nullable: true, display: false
         lastUpdatedBy nullable: true, display: false
     }
 
