@@ -15,9 +15,9 @@ class Member {
     static mapping = { tablePerHierarchy false }
 
     static constraints = {
-        firstName blank: false
-        middleName nullable: true
-        lastName blank: false
+        firstName blank: false, maxSize: 64
+        middleName nullable: true, maxSize: 64
+        lastName blank: false, maxSize: 64
         email email: true, blank:false, unique: true
         dateCreated nullable: true, display: false
         lastUpdate nullable: true, display: false

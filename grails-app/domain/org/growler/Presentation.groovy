@@ -5,7 +5,7 @@ class Presentation {
     String title
     String abstractText
     String summary
-    String type
+    String presentationType
     String targetAudiance
     int lengthMinutes
     Date dateCreated
@@ -22,7 +22,7 @@ class Presentation {
         title blank:false, maxSize:256
         abstractText blank: false, maxSize: 1024
         summary blank: false, maxSize: 2048
-        type inlist: [
+        presentationType inlist: [
             "WORKSHOP",
             "PANEL_DISCUSSION",
             "LECTURE"
