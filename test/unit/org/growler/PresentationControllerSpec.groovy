@@ -14,7 +14,7 @@ class PresentationControllerSpec extends Specification {
         params["title"] = 'title'
         params["abstractText"] = 'abstractText'
         params["summary"] = 'summary'
-        params["type"] = 'WORKSHOP'
+        params["presentationType"] = 'WORKSHOP'
         params["targetAudiance"] = 'targetAudiance'
         params["lengthMinutes"] = 60
     }

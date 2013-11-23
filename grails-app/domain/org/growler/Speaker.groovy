@@ -32,7 +32,7 @@ class Speaker extends Member {
         company maxSize: 256, nullable:true
         address nullable:true
         photo nullable:true
-        gravatarUrl nullable:true, url:true
+        gravatarUrl nullable:true, url:true, maxSize: 256
         bios nullable:true
         presentations nullable:true
         videos nullable:true
