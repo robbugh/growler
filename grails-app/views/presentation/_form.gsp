@@ -26,12 +26,12 @@
 	<g:textArea name="summary" cols="40" rows="5" maxlength="2048" required="" value="${presentationInstance?.summary}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: presentationInstance, field: 'type', 'error')} ">
-	<label for="type">
-		<g:message code="presentation.type.label" default="Type" />
+<div class="fieldcontain ${hasErrors(bean: presentationInstance, field: 'presentationType', 'error')} ">
+	<label for="presentationType">
+		<g:message code="presentation.presentationType.label" default="Presentation Type" />
 		
 	</label>
-	<g:textField name="type" value="${presentationInstance?.type}"/>
+	<g:textField name="presentationType" value="${presentationInstance?.presentationType}"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: presentationInstance, field: 'targetAudiance', 'error')} required">

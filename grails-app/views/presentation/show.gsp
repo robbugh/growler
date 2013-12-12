@@ -50,11 +50,11 @@
 				</li>
 				</g:if>
 			
-				<g:if test="${presentationInstance?.type}">
+				<g:if test="${presentationInstance?.presentationType}">
 				<li class="fieldcontain">
-					<span id="type-label" class="property-label"><g:message code="presentation.type.label" default="Type" /></span>
+					<span id="presentationType-label" class="property-label"><g:message code="presentation.presentationType.label" default="Presentation Type" /></span>
 					
-						<span class="property-value" aria-labelledby="type-label"><g:fieldValue bean="${presentationInstance}" field="type"/></span>
+						<span class="property-value" aria-labelledby="presentationType-label"><g:fieldValue bean="${presentationInstance}" field="presentationType"/></span>
 					
 				</li>
 				</g:if>
@@ -77,6 +77,15 @@
 				</li>
 				</g:if>
 			
+				<g:if test="${presentationInstance?.dateCreated}">
+				<li class="fieldcontain">
+					<span id="dateCreated-label" class="property-label"><g:message code="presentation.dateCreated.label" default="Date Created" /></span>
+					
+						<span class="property-value" aria-labelledby="dateCreated-label"><g:formatDate date="${presentationInstance?.dateCreated}" /></span>
+					
+				</li>
+				</g:if>
+			
 				<g:if test="${presentationInstance?.lastUpdate}">
 				<li class="fieldcontain">
 					<span id="lastUpdate-label" class="property-label"><g:message code="presentation.lastUpdate.label" default="Last Update" /></span>
@@ -91,15 +100,6 @@
 					<span id="lastUpdatedBy-label" class="property-label"><g:message code="presentation.lastUpdatedBy.label" default="Last Updated By" /></span>
 					
 						<span class="property-value" aria-labelledby="lastUpdatedBy-label"><g:fieldValue bean="${presentationInstance}" field="lastUpdatedBy"/></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${presentationInstance?.dateCreated}">
-				<li class="fieldcontain">
-					<span id="dateCreated-label" class="property-label"><g:message code="presentation.dateCreated.label" default="Date Created" /></span>
-					
-						<span class="property-value" aria-labelledby="dateCreated-label"><g:formatDate date="${presentationInstance?.dateCreated}" /></span>
 					
 				</li>
 				</g:if>
